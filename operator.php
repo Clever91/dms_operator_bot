@@ -1,15 +1,19 @@
 <?php
+// hide it
+define('TIMEZONE', 'Asia/Tashkent');
+define('TOKEN', '1882359300:AAGEJ2X2FfE-u6Q_QbY8BeYtqgSRUyJKQL8');
+define('DB_HOST', '149.154.71.209');
+define('DB_DATABASE', 'dms_base_test');
+define('DB_USER', 'dms_test');
+define('DB_PASSWORD', '5W7m7U2i');
+
 // make error enable
 error_reporting( E_ALL );
 ini_set( "display_errors", 1 );
-define('TIMEZONE', 'Asia/Tashkent');
 date_default_timezone_set(TIMEZONE);
-define('TOKEN', '1882359300:AAGEJ2X2FfE-u6Q_QbY8BeYtqgSRUyJKQL8');
 
 //load vendor
 require 'vendor/autoload.php';
-
-// use libs 
 
 // use App\helpers\BotHelp;
 use Telegram\Bot\Api;
@@ -44,16 +48,15 @@ if (!is_null($message) && $message->count()) {
     // if user is private so answer to him
     if (strtolower($chat->getType()) === "private") {
         // sqlite connection
+
         // if text command exists so answer to him
         if (!empty($text) && !$user->isBot()) {
 
             try {
-                // $db = new mysqli("149.154.71.209", "dms", "6Z2m1N1g", "dms_base");
-                $db = new mysqli("149.154.71.209", "dms_test", "5W7m7U2i", "dms_base_test");
+                $db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
                 $db->query("SET NAMES utf8");
-                $haveOrder = $db->query("SELECT id, image FROM `OrderSecond` LIMIT 1");
+                $haveOrder = $db->query("SELECT * FROM `OrderStatus`");
                 $have = $haveOrder->fetch_array(MYSQLI_ASSOC);
-                
 
                 $telegram->sendMessage([
                     'chat_id' => $chat->getId(), 
@@ -65,8 +68,6 @@ if (!is_null($message) && $message->count()) {
             }
 
             try {
-                // $mysqli = new mysqli("149.154.71.209", "dms_test", "5W7m7U2i", "dms_base_test");
-
                 $telegram->sendMessage([
                     'chat_id' => $chat->getId(), 
                     'text' => "Hello",
