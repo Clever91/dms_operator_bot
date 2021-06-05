@@ -11,7 +11,7 @@ require 'vendor/autoload.php';
 
 // use libs 
 
-use App\Helpers\BotHelp;
+// use App\helpers\BotHelp;
 use Telegram\Bot\Api;
 
 // init telegram api
@@ -44,19 +44,36 @@ if (!is_null($message) && $message->count()) {
     // if user is private so answer to him
     if (strtolower($chat->getType()) === "private") {
         // sqlite connection
-        // $connect = new SQLiteHelper();
-        // $lang = $connect->getLang($user->getId());
-
         // if text command exists so answer to him
         if (!empty($text) && !$user->isBot()) {
+
             try {
+                // $db = new mysqli("149.154.71.209", "dms", "6Z2m1N1g", "dms_base");
+                $db = new mysqli("149.154.71.209", "dms_test", "5W7m7U2i", "dms_base_test");
+                $db->query("SET NAMES utf8");
+                $haveOrder = $db->query("SELECT id, image FROM `OrderSecond` LIMIT 1");
+                $have = $haveOrder->fetch_array(MYSQLI_ASSOC);
+                
+
+                $telegram->sendMessage([
+                    'chat_id' => $chat->getId(), 
+                    'text' => json_encode($have),
+                    'parse_mode' => "Markdown",
+                ]);
+            } catch (Exception $e) {
+                error_log($e->getMessage());
+            }
+
+            try {
+                // $mysqli = new mysqli("149.154.71.209", "dms_test", "5W7m7U2i", "dms_base_test");
+
                 $telegram->sendMessage([
                     'chat_id' => $chat->getId(), 
                     'text' => "Hello",
                     'parse_mode' => "Markdown",
                 ]);
             } catch (Exception $e) {
-                BotHelp::cLog($e->getMessage());
+                // BotHelp::cLog($e->getMessage());
             }
         }
 

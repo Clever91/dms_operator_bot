@@ -49,7 +49,39 @@ if (!is_null($message) && $message->count()) {
 
         // if text command exists so answer to him
         if (!empty($text) && !$user->isBot()) {
+            // var_dump($have);
+            
             try {
+
+                $mysqli = new mysqli("149.154.71.209", "dms_test", "5W7m7U2i", "dms_base_test");
+
+                if ($mysqli -> connect_errno) {
+                    echo "Failed to connect to MySQL: " . $mysqli -> connect_error;
+                    BotHelp::cLog( $mysqli -> connect_error);
+                    exit();
+                }
+
+                // Return name of current default database
+                if ($result = $mysqli -> query("SELECT DATABASE()")) {
+                    $row = $result -> fetch_row();
+                    echo "Default database is " . $row[0];
+                    BotHelp::cLog( $row);
+                    $result -> close();
+                }
+
+                // Change db to "test" db
+                $mysqli -> select_db("dms_base_test");
+
+                // Return name of current default database
+                if ($result = $mysqli -> query("SELECT DATABASE()")) {
+                    $row = $result -> fetch_row();
+                    echo "Default database is " . $row[0];
+                    BotHelp::cLog( $row);
+                    $result -> close();
+                }
+
+                $mysqli -> close();
+
                 $telegram->sendMessage([
                     'chat_id' => $chat->getId(), 
                     'text' => "Hello",
