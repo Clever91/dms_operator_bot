@@ -1,21 +1,15 @@
 <?php
-// hide it
-define('TIMEZONE', 'Asia/Tashkent');
-define('TOKEN', '1882359300:AAGEJ2X2FfE-u6Q_QbY8BeYtqgSRUyJKQL8');
-define('DB_HOST', '149.154.71.209');
-define('DB_DATABASE', 'dms_base_test');
-define('DB_USER', 'dms_test');
-define('DB_PASSWORD', '5W7m7U2i');
+// load config
+include_once('app/config/main.php');
+include_once('app/config/db.php');
+include_once('app/helpers/BotHelp.php');
+include_once('app/helpers/Database.php');
 
-// make error enable
-error_reporting( E_ALL );
-ini_set( "display_errors", 1 );
-date_default_timezone_set(TIMEZONE);
-
-//load vendor
+// load vendor
 require 'vendor/autoload.php';
 
-// use App\helpers\BotHelp;
+use App\Helpers\Database;
+use App\Helpers\BotHelp;
 use Telegram\Bot\Api;
 
 // init telegram api
@@ -47,25 +41,17 @@ if (!is_null($message) && $message->count()) {
 
     // if user is private so answer to him
     if (strtolower($chat->getType()) === "private") {
-        // sqlite connection
+        // mysql connection
+        $settings["host"] = DB_HOST;
+        $settings["dbname"] = DB_DATABASE;
+        $settings["user"] = DB_USER;
+        $settings["pass"] = DB_PASSWORD;
+        $db = new Database($settings);
 
         // if text command exists so answer to him
         if (!empty($text) && !$user->isBot()) {
 
-            try {
-                $db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
-                $db->query("SET NAMES utf8");
-                $haveOrder = $db->query("SELECT * FROM `OrderStatus`");
-                $have = $haveOrder->fetch_array(MYSQLI_ASSOC);
-
-                $telegram->sendMessage([
-                    'chat_id' => $chat->getId(), 
-                    'text' => json_encode($have),
-                    'parse_mode' => "Markdown",
-                ]);
-            } catch (Exception $e) {
-                error_log($e->getMessage());
-            }
+            // $data = $db->query("SELECT * FROM OrderStatus ORDER BY name ASC", array())->fetchAll();
 
             try {
                 $telegram->sendMessage([
@@ -74,7 +60,7 @@ if (!is_null($message) && $message->count()) {
                     'parse_mode' => "Markdown",
                 ]);
             } catch (Exception $e) {
-                // BotHelp::cLog($e->getMessage());
+                BotHelp::cLog($e->getMessage());
             }
         }
 
