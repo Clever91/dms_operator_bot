@@ -71,4 +71,10 @@ class Database
     {
         return date($format);
     }
+
+    public function __destruct()
+    {
+        // $this->connection->close();
+        $this->connection = null;
+    }
 }

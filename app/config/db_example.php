@@ -4,6 +4,7 @@ define('DB_DATABASE', '');
 define('DB_USER', '');
 define('DB_PASSWORD', '');
 
-define('TOKEN', '');
+define('OPERATOR_TOKEN', '');
+define('CLIENT_TOKEN', '');
 
 ?>
